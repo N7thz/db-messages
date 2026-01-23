@@ -3,12 +3,99 @@ generator client {
 }
 
 datasource db {
-  provider  = "postgresql"
+  provider = "postgresql"
+}
+
+enum Role {
+  USER
+  ADMIN
 }
 
 model User {
-  id        String      @id @default(uuid())
-  email     String   @unique
-  password  String
-  role String
+  id            String    @id @default(uuid())
+  email         String    @unique
+  password      String?
+  createdAt     DateTime  @default(now())
+  role          Role      @default(USER)
+  name          String
+  emailVerified Boolean   @default(false)
+  image         String?
+  updatedAt     DateTime  @updatedAt
+  tickets       Ticket[]
+  sessions      Session[]
+  accounts      Account[]
+
+  @@map("users")
+}
+
+model Ticket {
+  id       String    @id @default(uuid())
+  messages Message[]
+  user     User?     @relation(fields: [userId], references: [id])
+  userId   String?
+
+  @@map("tickets")
+}
+
+model Message {
+  id        String   @id @default(uuid())
+  to        String
+  from      String
+  type      String
+  content   String
+  createdAt DateTime @default(now())
+  ticket    Ticket?  @relation(fields: [ticketId], references: [id])
+  ticketId  String?
+
+  @@map("messages")
+}
+
+// -------------------- Auth Models --------------------
+
+model Session {
+  id        String   @id
+  expiresAt DateTime
+  token     String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  ipAddress String?
+  userAgent String?
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([token])
+  @@index([userId])
+  @@map("session")
+}
+
+model Account {
+  id                    String    @id
+  accountId             String
+  providerId            String
+  userId                String
+  user                  User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  accessToken           String?
+  refreshToken          String?
+  idToken               String?
+  accessTokenExpiresAt  DateTime?
+  refreshTokenExpiresAt DateTime?
+  scope                 String?
+  password              String?
+  createdAt             DateTime  @default(now())
+  updatedAt             DateTime  @updatedAt
+
+  @@index([userId])
+  @@map("account")
+}
+
+model Verification {
+  id         String   @id
+  identifier String
+  value      String
+  expiresAt  DateTime
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@index([identifier])
+  @@map("verification")
 }

@@ -1,22 +1,28 @@
+import { Toaster } from "@/components/ui/sonner"
+import { cn } from "@/lib/utils"
 import { ThemeProvider } from "@/providers/theme-provider"
+import { JetBrains_Mono } from "next/font/google"
 import { ReactNode } from "react"
+import { Background } from "@/components/background"
 import "./globals.css"
-import { AppSidebar } from "@/components/app-sidebar"
-import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar"
+
+const jetBrains = JetBrains_Mono({
+  variable: "--font-jetbrains-mono",
+  subsets: ["latin"],
+  weight: ["300", "400", "600", "700"],
+})
 
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="ptBR" suppressHydrationWarning>
-      <body className="h-dvh w-full">
-        <ThemeProvider
-          attribute="class"
-          defaultTheme="system"
-        >
-          <SidebarProvider>
-            <AppSidebar />
+      <head />
+      <body className={cn(jetBrains.className, "antialiased")}>
+        <ThemeProvider attribute="class" defaultTheme="system">
+          <Background>
             {children}
-          </SidebarProvider>
+          </Background>
         </ThemeProvider>
+        <Toaster />
       </body>
     </html>
   )
