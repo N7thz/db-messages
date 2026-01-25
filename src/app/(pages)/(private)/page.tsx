@@ -1,4 +1,6 @@
+import { ChatMessages } from "@/components/chat-message"
 import { ModeToggle } from "@/components/mode-toggle"
+import { SearchInput } from "@/components/seach-input"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import {
   Card,
@@ -7,15 +9,21 @@ import {
   CardHeader,
   CardTitle
 } from "@/components/ui/card"
-import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area"
 import {
   ResizableHandle,
   ResizablePanel,
   ResizablePanelGroup,
 } from "@/components/ui/resizable"
+import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area"
+import { Separator } from "@/components/ui/separator"
+import { UploadFileDialog } from "@/components/upload-file-dialog"
 import { cn } from "@/lib/utils"
+import { messages } from "@/mocks/messages"
 
 export default function Home() {
+
+  const currentUser = "nathan ferreira"
+
   return (
     <main className="w-full flex-1">
       <header className="border-b h-16 flex items-center justify-between px-2">
@@ -30,7 +38,12 @@ export default function Home() {
           minSize={15}
         >
           <Card className="size-full rounded-none">
-            <ScrollArea className="h-230">
+            <CardHeader>
+              <SearchInput />
+              <UploadFileDialog />
+            </CardHeader>
+            <Separator />
+            <ScrollArea className="h-200">
               <ScrollBar />
               <CardContent className="space-y-2 px-2 size-full">
                 {
@@ -61,9 +74,9 @@ export default function Home() {
           defaultSize={75}
           minSize={40}
         >
-          <Card className="w-full pt-0 rounded-none border-none overflow-hidden">
+          <Card className="size-full pt-0 rounded-none border-none overflow-hidden gap-0">
             <CardHeader className={cn(
-              "h-1/8 flex items-center border-b py-2",
+              "h-24 flex items-center py-2",
               "has-data-[slot=card-action]:grid-cols-[auto_1fr]"
             )}>
               <CardAction className={cn(
@@ -81,9 +94,10 @@ export default function Home() {
                 Chat Title
               </CardTitle>
             </CardHeader>
-            <CardContent>
-
-            </CardContent>
+            <ChatMessages
+              messages={messages}
+              currentUser={currentUser}
+            />
           </Card>
         </ResizablePanel>
       </ResizablePanelGroup>

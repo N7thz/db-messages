@@ -47,7 +47,7 @@ export const AppSidebar = async () => {
 			<SidebarContent>
 				<SidebarGroup>
 					<SidebarGroupLabel className="text-primary text-xl mb-4">
-						Chabra Tasks
+						Messages
 					</SidebarGroupLabel>
 					<SidebarGroupContent>
 						<SidebarMenu>

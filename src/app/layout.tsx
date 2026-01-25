@@ -14,7 +14,7 @@ const jetBrains = JetBrains_Mono({
 
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
-    <html lang="ptBR" suppressHydrationWarning>
+    <html lang="pt-BR" suppressHydrationWarning>
       <head />
       <body className={cn(jetBrains.className, "antialiased")}>
         <ThemeProvider attribute="class" defaultTheme="system">
