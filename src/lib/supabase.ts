@@ -2,7 +2,7 @@ import { createClient } from '@supabase/supabase-js'
 import z from 'zod'
 
 const envSchema = z.object({
-    SUPABASE_URL: z.string().url(),
+    SUPABASE_URL: z.url(),
     SUPABASE_KEY: z.string().min(1),
 })
 

@@ -19,6 +19,11 @@ import { Separator } from "@/components/ui/separator"
 import { UploadFileDialog } from "@/components/upload-file-dialog"
 import { cn } from "@/lib/utils"
 import { messages } from "@/mocks/messages"
+import { Metadata } from "next"
+
+export const metadata: Metadata = {
+  title: "Home | Chat App",
+}
 
 export default function Home() {
 
