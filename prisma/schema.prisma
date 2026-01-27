@@ -8,6 +8,7 @@ datasource db {
 
 enum Role {
   USER
+  SUPERVISOR
   ADMIN
 }
 
@@ -15,25 +16,36 @@ model User {
   id            String    @id @default(uuid())
   email         String    @unique
   password      String?
-  createdAt     DateTime  @default(now())
+  createdAt     DateTime  @default(now()) @map("created_at")
   name          String
   emailVerified Boolean   @default(false)
   image         String?
   role          Role      @default(USER)
   updatedAt     DateTime  @updatedAt
-  tickets       Ticket[]
+  lists         List[]
   sessions      Session[]
   accounts      Account[]
 
   @@map("users")
 }
 
+model List {
+  id        String   @id @default(uuid())
+  name      String
+  createdAt DateTime @default(now()) @map("created_at")
+  user      User?    @relation(fields: [userId], references: [id])
+  userId    String?
+  tickets   Ticket[]
+
+  @@map("lists")
+}
+
 model Ticket {
   id        String    @id @default(uuid())
   messages  Message[]
-  createdAt DateTime  @default(now())
-  user      User?     @relation(fields: [userId], references: [id])
-  userId    String?
+  createdAt DateTime  @default(now()) @map("created_at")
+  list      List?     @relation(fields: [listId], references: [id])
+  listId    String?
 
   @@map("tickets")
 }
@@ -44,7 +56,7 @@ model Message {
   from      String
   type      String
   content   String
-  createdAt DateTime @default(now())
+  createdAt DateTime @default(now()) @map("created_at")
   ticket    Ticket?  @relation(fields: [ticketId], references: [id])
   ticketId  String?
 
