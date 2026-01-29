@@ -1,8 +1,8 @@
 "use client"
 
 import {
-    getContactIdByNumberPhone
-} from "@/actions/blip/get-contact-id-by-number-phone"
+    findContactIdByNumberPhone
+} from "@/actions/blip/find-contact-id-by-number-phone"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardFooter } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
@@ -83,7 +83,7 @@ export default function Home() {
 
     async function onSubmit({ numberPhone }: FormData) {
 
-        const result = await getContactIdByNumberPhone(numberPhone)
+        const result = await findContactIdByNumberPhone(numberPhone)
         setData(result)
     }
 
