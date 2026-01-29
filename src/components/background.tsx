@@ -1,5 +1,5 @@
 import { LightRays } from "./ui/light-rays"
-import { LayoutProps } from "@/types"
+import { LayoutProps } from "@/types/index.types"
 
 export const Background = ({ children }: LayoutProps) => {
 	return (

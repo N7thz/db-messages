@@ -19,7 +19,7 @@ import { Separator } from "@/components/ui/separator"
 import { SidebarProvider } from "@/components/ui/sidebar"
 import { UploadFileDialog } from "@/components/upload-file-dialog"
 import { auth } from "@/lib/auth"
-import { LayoutProps } from "@/types"
+import { LayoutProps } from "@/types/index.types"
 import { cookies, headers } from "next/headers"
 import { redirect } from "next/navigation"
 
@@ -54,6 +54,7 @@ export default async function PrivateLayout({ children }: LayoutProps) {
 				<ResizablePanel
 					defaultSize={75}
 					minSize={40}
+					className="flex"
 				>
 					{children}
 				</ResizablePanel>

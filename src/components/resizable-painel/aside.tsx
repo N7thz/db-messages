@@ -2,6 +2,8 @@
 
 import { findManyContacts } from "@/actions/blip/find-many-contacts"
 import { SearchInput } from "@/components/seach-input"
+import { toast } from "@/components/toast"
+import { Button } from "@/components/ui/button"
 import {
     Card,
     CardAction,
@@ -12,18 +14,22 @@ import {
     CardTitle
 } from "@/components/ui/card"
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area"
+import { Separator } from "@/components/ui/separator"
+import { cn } from "@/lib/utils"
 import { useQuery } from "@tanstack/react-query"
 import { formatDate } from "date-fns"
+import { ptBR } from "date-fns/locale"
 import { Contact, Ellipsis } from "lucide-react"
-import { toast } from "../toast"
-import { Button } from "../ui/button"
-import { da, ptBR } from "date-fns/locale"
-import { cn } from "@/lib/utils"
-import { Separator } from "../ui/separator"
+import Link from "next/link"
 
 export const Aside = () => {
 
-    const { data, isLoading, error, refetch } = useQuery({
+    const {
+        data,
+        isLoading,
+        error,
+        refetch
+    } = useQuery({
         queryKey: ["find-many-contacts"],
         queryFn: () => findManyContacts()
     })
@@ -62,7 +68,7 @@ export const Aside = () => {
                 <ScrollBar />
                 <CardHeader>
                     <CardTitle className="text-2xl flex items-center gap-2">
-                        <Contact className="size-6"/>
+                        <Contact className="size-6" />
                         Contatos
                         <span>
                             ({resource.total})
@@ -70,7 +76,7 @@ export const Aside = () => {
                     </CardTitle>
                 </CardHeader>
                 <Separator />
-                <CardContent className="space-y-2 px-2 size-full pt-4">
+                <CardContent className="px-2 size-full pt-4">
                     {
                         resource.items.map(({
                             identity,
@@ -78,6 +84,8 @@ export const Aside = () => {
                             extras,
                             ...rest
                         }) => {
+
+                            console.log(rest)
 
                             const lastMessageDate = (
                                 rest.lastMessageDate
@@ -98,40 +106,43 @@ export const Aside = () => {
                             )
 
                             return (
-                                <Card
+                                <Link
                                     key={identity}
-                                    className={cn(
-                                        "size-full cursor-pointer transition-all",
-                                        "hover:bg-card/60 hover:border-2 hover:scale-95"
-                                    )}
+                                    href={`/${identity}`}
+                                    className="group"
                                 >
-                                    <CardHeader>
-                                        <CardTitle className="truncate">
-                                            {name}
-                                        </CardTitle>
+                                    <Card className={cn(
+                                        "size-full transition-all",
+                                        "group-hoverbg-card/60 group-hoverborder-2 group-hover:scale-95 my-2"
+                                    )}>
+                                        <CardHeader>
+                                            <CardTitle className="truncate">
+                                                {name}
+                                            </CardTitle>
+                                            {
+                                                phoneNumber && (
+                                                    <CardDescription>
+                                                        {phoneNumber}
+                                                    </CardDescription>
+                                                )
+                                            }
+                                            <CardAction>
+                                                <Button variant={"ghost"}>
+                                                    <Ellipsis />
+                                                </Button>
+                                            </CardAction>
+                                        </CardHeader>
                                         {
-                                            phoneNumber && (
-                                                <CardDescription>
-                                                    {phoneNumber}
-                                                </CardDescription>
+                                            lastMessageDate && (
+                                                <CardFooter>
+                                                    <CardDescription className="font-extralight">
+                                                        {lastMessageDate}
+                                                    </CardDescription>
+                                                </CardFooter>
                                             )
                                         }
-                                        <CardAction>
-                                            <Button variant={"ghost"}>
-                                                <Ellipsis />
-                                            </Button>
-                                        </CardAction>
-                                    </CardHeader>
-                                    {
-                                        lastMessageDate && (
-                                            <CardFooter>
-                                                <CardDescription className="font-extralight">
-                                                    {lastMessageDate}
-                                                </CardDescription>
-                                            </CardFooter>
-                                        )
-                                    }
-                                </Card>
+                                    </Card>
+                                </Link>
                             )
                         })
                     }

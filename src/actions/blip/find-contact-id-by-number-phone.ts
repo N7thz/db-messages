@@ -1,8 +1,8 @@
 "use server"
 
 import { api } from "@/lib/axios"
-import { BodyBlib } from "@/types"
-import type { BlipAccountResponse } from "@/types/blip-account-response"
+import { BodyBlib } from "@/types/index.types"
+import type { BlipAccountResponse } from "@/types/blip-account-response.types"
 import { randomUUID } from "node:crypto"
 import { z } from "zod"
 

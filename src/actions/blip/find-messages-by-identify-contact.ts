@@ -1,15 +1,17 @@
 "use server"
 
 import { api } from "@/lib/axios"
+import {
+    LimeThreadMessagesResponse
+} from "@/types/lime-thread-messages-response.types"
 import { randomUUID } from "node:crypto"
-import { LimeCollectionResponse } from "@/types/lime-collection-response.types"
 import z from "zod"
 
 const findManyContactsSchema = z.object({
     ROUTER_API_KEY: z.string().min(1, "A chave do roteador é obrigatória."),
 })
 
-export async function findManyContacts() {
+export async function findMessagesByIdentifyContact(identify: string) {
 
     const url = "https://chabra.http.msging.net/commands"
 
@@ -26,10 +28,10 @@ export async function findManyContacts() {
     const body = {
         id: randomUUID(),
         method: "get",
-        uri: "/contacts"
+        uri: `/threads/${identify}?refreshExpiredMedia=true`
     }
 
-    const response = await api.post<LimeCollectionResponse>(url, body, {
+    const response = await api.post<LimeThreadMessagesResponse>(url, body, {
         headers: {
             Authorization: `Key ${ROUTER_API_KEY}`,
         },
