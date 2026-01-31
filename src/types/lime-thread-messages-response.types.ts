@@ -2,7 +2,7 @@
  * LIME Thread Messages – Response
  * ====================================================== */
 
-export interface LimeThreadMessagesResponse {
+export type LimeThreadMessagesResponse = {
     type: "application/vnd.lime.collection+json"
     method: "get"
     status: "success" | "failure"
@@ -16,7 +16,7 @@ export interface LimeThreadMessagesResponse {
  * Resource (Collection)
  * ====================================================== */
 
-export interface LimeThreadMessagesResource {
+export type LimeThreadMessagesResource = {
     total: number
     itemType: "application/vnd.iris.thread-message+json"
     items: LimeThreadMessage[]
@@ -28,7 +28,7 @@ export interface LimeThreadMessagesResource {
  * LIME Thread Message – Base
  * ====================================================== */
 
-export interface LimeThreadMessage {
+export type LimeThreadMessage = {
     id: string
     direction: "sent" | "received"
     type: string
@@ -48,92 +48,88 @@ export type LimeMessageContent =
     | LimeReplyContent
     | LimeTemplateContent
     | LimeTicketContent
-    | LimeInteractiveContent
+    | LimeInteractiveMessage
 
 /* ======================================================
  * Text
  * ====================================================== */
 
-export interface LimeTextContent {
-    type: "text/plain"
-    content: string
-}
+export type LimeTextContent = string
 
 /* ======================================================
  * Media
  * ====================================================== */
 
-export interface LimeMediaContent {
-    type: "application/vnd.lime.media-link+json"
-    content: {
-        type: string
-        uri: string
-    }
+export type LimeMediaContent = {
+    type: string
+    uri: string
 }
 
 /* ======================================================
  * Select
  * ====================================================== */
 
-export interface LimeSelectContent {
-    type: "application/vnd.lime.select+json"
-    content: {
+export type LimeSelectContent = {
+    scope?: "immediate"
+    text: string
+    options: Array<{
         text: string
-        scope?: "immediate"
-        options: Array<{
-            text: string
-        }>
-    }
+    }>
 }
 
 /* ======================================================
  * Reply
  * ====================================================== */
 
-export interface LimeReplyContent {
-    type: "application/vnd.lime.reply+json"
-    content: {
-        replied: {
-            type: string
-            value: string
-        }
-        inReplyTo: {
-            id: string
-            type: string
-            direction: "sent" | "received"
-            value: {
-                text: string
-                options: Array<{
-                    text: string
-                }>
-                scope?: string
-            }
-        }
+export type LimeReplyContent = {
+    replied: {
+        type: string
+        value: string
+    }
+    inReplyTo: {
+        id: string
+        type: string
+        direction: "sent" | "received"
+        value: LimeInteractiveMessage
     }
 }
+
+export type LimeReceivedInteractiveObject = {
+    direction: "received" | "sent"
+    object: LimeInteractiveList
+}
+
+export type LimeInteractiveMessage = {
+    recipient_type: "individual"
+    type: "interactive"
+    interactive: LimeInteractiveContent
+}
+
+export type LimeInteractiveContent =
+    | LimeInteractiveList
+    | LimeInteractiveButton
+    | LimeReceivedInteractiveObject
+
 
 /* ======================================================
  * Template (WhatsApp)
  * ====================================================== */
 
-export interface LimeTemplateContent {
-    type: "application/json"
-    content: {
-        type: "template"
-        template: {
-            name: string
-            language: {
-                code: string
-                policy: string
-            }
-            components: Array<{
-                type: string
-                parameters: Array<{
-                    type: string
-                    text?: string
-                }>
-            }>
+export type LimeTemplateContent = {
+    type: "template"
+    template: {
+        name: string
+        language: {
+            code: string
+            policy: string
         }
+        components: Array<{
+            type: string
+            parameters: Array<{
+                type: string
+                text?: string
+            }>
+        }>
     }
 }
 
@@ -141,27 +137,24 @@ export interface LimeTemplateContent {
  * Ticket (Iris)
  * ====================================================== */
 
-export interface LimeTicketContent {
-    type: "application/vnd.iris.ticket+json"
-    content: {
-        id: string
-        sequentialId: number
-        ownerIdentity: string
-        customerIdentity: string
-        customerDomain: string
-        provider: string
-        status: string
-        storageDate: string
-        externalId: string
-        rating: number
-        team: string
-        unreadMessages: number
-        closed: boolean
-        priority: number
-        customerInput?: {
-            type: string
-            value: string
-        }
+export type LimeTicketContent = {
+    id: string
+    sequentialId: number
+    ownerIdentity: string
+    customerIdentity: string
+    customerDomain: string
+    provider: string
+    status: string
+    storageDate: string
+    externalId: string
+    rating: number
+    team: string
+    unreadMessages: number
+    closed: boolean
+    priority: number
+    customerInput?: {
+        type: string
+        value: string
     }
 }
 
@@ -169,19 +162,13 @@ export interface LimeTicketContent {
  * Interactive (WhatsApp)
  * ====================================================== */
 
-export interface LimeInteractiveContent {
-    recipient_type: "individual"
-    type: "interactive"
-    interactive: LimeInteractive
-}
-
 export type LimeInteractive =
     | LimeInteractiveButton
     | LimeInteractiveList
 
 /* ---------- Button ---------- */
 
-export interface LimeInteractiveButton {
+export type LimeInteractiveButton = {
     type: "button"
     body: {
         text: string
@@ -191,7 +178,7 @@ export interface LimeInteractiveButton {
     }
 }
 
-export interface LimeInteractiveReplyButton {
+export type LimeInteractiveReplyButton = {
     type: "reply"
     reply: {
         id: number | string
@@ -201,7 +188,7 @@ export interface LimeInteractiveReplyButton {
 
 /* ---------- List ---------- */
 
-export interface LimeInteractiveList {
+export type LimeInteractiveList = {
     type: "list"
     body: {
         text: string

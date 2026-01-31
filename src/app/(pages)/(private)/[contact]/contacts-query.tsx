@@ -8,12 +8,28 @@ import {
 } from "@/actions/blip/find-messages-by-identify-contact"
 import { toast } from "@/components/toast"
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import {
+    Card,
+    CardContent,
+    CardDescription,
+    CardFooter,
+    CardHeader,
+    CardTitle
+} from "@/components/ui/card"
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area"
 import { Skeleton } from "@/components/ui/skeleton"
 import { cn } from "@/lib/utils"
 import { useQuery } from "@tanstack/react-query"
 import { formatDate } from "date-fns"
+import { ContactInterative } from "./contact-interative"
+import { ContactInterativeList } from "./contact-interative-list"
+import { ContactMessage } from "./contact-message"
+import { ContactScopeText } from "./contact-scope-text"
+import { ContactsQueryLoading } from "./contacts-query-loading"
+import { stringToHTML } from "@/functions/string-to-HTML"
+import { Button } from "@/components/ui/button"
+import { ContactScopeAvaliation } from "./contact-scope-avaliation"
+import { ContactScopeTextResponse } from "./contact-scope-text-response"
 
 export const ContactsQuery = ({ identity }: { identity: string }) => {
 
@@ -21,9 +37,9 @@ export const ContactsQuery = ({ identity }: { identity: string }) => {
 
     const {
         data: contact,
-        isLoading: contactLoading,
+        isLoading: contactIsLoading
     } = useQuery({
-        queryKey: ["find-contact-id-by-number-phone", numberPhone],
+        queryKey: ["find-contact-id-by-number-phone", identity],
         queryFn: () => findContactIdByNumberPhone(numberPhone)
     })
 
@@ -39,9 +55,7 @@ export const ContactsQuery = ({ identity }: { identity: string }) => {
 
     if (isLoading || !data) {
         return (
-            <p>
-                Carregando...
-            </p>
+            <ContactsQueryLoading />
         )
     }
 
@@ -62,104 +76,184 @@ export const ContactsQuery = ({ identity }: { identity: string }) => {
 
     const { resource } = data
 
-    console.log(contact)
-
     return (
         <Card className="flex-1 border-none rounded-none">
-            <CardHeader>
+            <CardHeader className="border-b pb-3 gap-0">
                 <CardTitle className="text-2xl mb-1.25">
                     {
-                        (contactLoading || !contact)
-                            ? <Skeleton className="h-8 w-full" />
+                        (contactIsLoading || !contact)
+                            ? <Skeleton className="h-8 w-full rounded-full" />
                             : contact.resource.fullName
-                                ? contact.resource.fullName
-                                : contact.resource.phoneNumber
                     }
                 </CardTitle>
+                <CardDescription>
+                    {
+                        (contactIsLoading || !contact)
+                            ? <Skeleton className="h-6 w-full rounded-full" />
+                            : contact.resource.phoneNumber
+                    }
+                </CardDescription>
             </CardHeader>
             <ScrollArea className="flex-1 min-h-200">
                 <ScrollBar />
-                <CardContent className="border-t space-y-1 pt-2">
+                <CardContent className="space-y-2 px-2">
                     {
-                        resource.items.reverse().map(({
-                            id, content, direction, date
-                        }) => (
-                            <div
-                                key={id}
-                                className={cn(
-                                    "w-full flex",
-                                    direction === "received"
-                                        ? "justify-end"
-                                        : "justify-start"
-                                )}
-                            >
-                                <Alert className={cn(
-                                    "max-w-[70%] w-fit px-4 py-2 text-sm text-foreground shadow-2xl space-y-2",
-                                    "max-w-[70%] rounded-lg bg-muted p-4",
-                                    direction === "received"
-                                        ? "dark:bg-[#144d37] bg-[#d9fdd3] rounded-tr-none"
-                                        : "dark:bg-muted bg-zinc-100 rounded-tl-none"
-                                )}>
-                                    <AlertTitle className="font-normal tracking-normal leading-normal break-words whitespace-pre-wrap block">
-                                        {typeof content === "string" && content}
-                                    </AlertTitle>
+                        [...resource.items].reverse().map(({
+                            id, direction, content, date
+                        }) => {
+
+                            if (
+                                typeof content === "object" &&
+                                "recipient_type" in content &&
+                                "interactive" in content &&
+                                "body" in content.interactive &&
+                                "action" in content.interactive &&
+                                "button" in content.interactive.action
+                            ) {
+                                console.log(content.interactive.action)
+                            }
+
+                            return (
+                                <div
+                                    key={id}
+                                    className={cn(
+                                        "w-full flex",
+                                        direction === "sent"
+                                            ? "justify-end"
+                                            : "justify-start"
+                                    )}
+                                >
+                                    {
+                                        (
+                                            typeof content === "object" &&
+                                            "recipient_type" in content &&
+                                            "interactive" in content &&
+                                            "body" in content.interactive &&
+                                            "action" in content.interactive &&
+                                            "button" in content.interactive.action
+                                        ) && (
+                                            <ContactInterativeList
+                                                date={date}
+                                                direction={direction}
+                                                sections={content.interactive.action.sections}
+                                                title={content.interactive.body.text}
+                                            />
+                                        )
+                                    }
+                                    {
+                                        (
+                                            typeof content === "object" &&
+                                            "options" in content &&
+                                            !("scope" in content) &&
+                                            direction === "sent"
+                                        ) && (
+                                            <ContactScopeAvaliation
+                                                content={content}
+                                                date={date}
+                                                direction={direction}
+                                            />
+                                        )
+                                    }
+                                    {
+                                        (
+                                            typeof content === "object" &&
+                                            "replied" in content &&
+                                            "value" in content.replied
+                                        ) && (
+                                            <ContactScopeTextResponse
+                                                date={date}
+                                                direction={direction}
+                                                value={content.replied.value}
+                                            />
+                                        )
+                                    }
+                                    {
+                                        (
+                                            typeof content === "object" &&
+                                            "replied" in content &&
+                                            "interactive" in content.inReplyTo.value &&
+                                            "type" in content.inReplyTo.value.interactive &&
+                                            content.inReplyTo.value.interactive.type === "list" &&
+                                            direction === "sent"
+                                        ) && (
+                                            <ContactInterativeList
+                                                title={
+                                                    content.inReplyTo.value.interactive.body.text
+                                                }
+                                                sections={
+                                                    content.inReplyTo.value.interactive.action.sections
+                                                }
+                                                date={date}
+                                                direction={direction}
+                                            />
+                                        )
+                                    }
+                                    {
+                                        (
+                                            typeof content === "object" &&
+                                            "replied" in content &&
+                                            "interactive" in content.inReplyTo.value &&
+                                            "type" in content.inReplyTo.value.interactive &&
+                                            content.inReplyTo.value.interactive.type === "button" &&
+                                            direction === "sent"
+                                        ) && (
+                                            <ContactInterative
+                                                title={
+                                                    content.inReplyTo.value.interactive.body.text
+                                                }
+                                                buttons={
+                                                    content.inReplyTo.value.interactive.action.buttons
+                                                }
+                                                date={date}
+                                                direction={direction}
+                                            />
+                                        )
+                                    }
+                                    {
+                                        typeof content === "string" && (
+                                            <ContactMessage
+                                                date={date}
+                                                content={content}
+                                                direction={direction}
+                                            />
+                                        )
+                                    }
                                     {(
                                         typeof content === "object" &&
-                                        content && "interactive" in content) && (
-                                            <Alert>
-                                                <pre>
-                                                    {JSON.stringify(content, null, 2)}
-                                                </pre>
-                                                <AlertTitle>
-
-                                                </AlertTitle>
-                                            </Alert>
-                                        )}
-                                    <AlertDescription className="ml-auto">
-                                        {formatDate(date, "HH:mm")}
-                                    </AlertDescription>
-                                </Alert>
-                            </div>
-                        ))
+                                        "scope" in content
+                                    ) && (
+                                            <ContactScopeText
+                                                content={content}
+                                                date={date}
+                                                direction={direction}
+                                            />
+                                        )
+                                    }
+                                    {(
+                                        typeof content === "object" &&
+                                        "interactive" in content &&
+                                        "body" in content.interactive &&
+                                        "buttons" in content.interactive.action
+                                    ) && (
+                                            <ContactInterative
+                                                title={content.interactive.body.text}
+                                                buttons={
+                                                    content
+                                                        .interactive
+                                                        .action
+                                                        .buttons
+                                                }
+                                                date={date}
+                                                direction={direction}
+                                            />
+                                        )
+                                    }
+                                </div>
+                            )
+                        })
                     }
                 </CardContent>
             </ScrollArea>
         </Card>
     )
 }
-
-// "content": {
-//     "recipient_type": "individual",
-//         "type": "interactive",
-//             "interactive": {
-//         "type": "button",
-//             "body": {
-//             "text": "Como posso te ajudar hoje?"
-//         },
-//         "action": {
-//             "buttons": [
-//                 {
-//                     "type": "reply",
-//                     "reply": {
-//                         "id": 1,
-//                         "title": "Credenciamento"
-//                     }
-//                 },
-//                 {
-//                     "type": "reply",
-//                     "reply": {
-//                         "id": 2,
-//                         "title": "Comercial"
-//                     }
-//                 },
-//                 {
-//                     "type": "reply",
-//                     "reply": {
-//                         "id": 3,
-//                         "title": "Agend e Suporte"
-//                     }
-//                 }
-//             ]
-//         }
-//     }
-// }

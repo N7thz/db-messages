@@ -8,8 +8,6 @@ export default async function Contact({
 
     const contact = decodeURIComponent((await params).contact)
 
-    console.log(contact)
-
     return (
         <ContactsQuery identity={contact} />
     )

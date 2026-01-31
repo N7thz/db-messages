@@ -70,7 +70,7 @@ export async function findContactIdByNumberPhone(numberPhone: string) {
         id: randomUUID(),
         to: "postmaster@wa.gw.msging.net",
         method: "get",
-        uri: `lime://wa.gw.msging.net/accounts/+55${parsedPhone}`,
+        uri: `lime://wa.gw.msging.net/accounts/+${parsedPhone}`,
     }
 
     const response = await api.post<BlipAccountResponse>(url, body, {

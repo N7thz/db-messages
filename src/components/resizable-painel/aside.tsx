@@ -59,6 +59,8 @@ export const Aside = () => {
 
     const { resource } = data
 
+    console.log(resource)
+
     return (
         <Card className="size-full rounded-none">
             <CardHeader>
@@ -85,7 +87,7 @@ export const Aside = () => {
                             ...rest
                         }) => {
 
-                            console.log(rest)
+                            const contactIsValid = identity.includes("@wa.gw.msging.net")
 
                             const lastMessageDate = (
                                 rest.lastMessageDate
@@ -104,6 +106,45 @@ export const Aside = () => {
                                         .replace(/(\d{2})(\d{4,5})(\d{4})/, "($1) $2-$3")
                                     : null
                             )
+
+                            if (!contactIsValid) {
+                                return (
+                                    <Card
+                                        key={identity}
+                                        className={cn(
+                                            "size-full my-2 opacity-60 cursor-not-allowed"
+                                        )}
+                                        title="Não é possivel acessar esse contato"
+                                    >
+                                        <CardHeader>
+                                            <CardTitle className="truncate">
+                                                {name}
+                                            </CardTitle>
+                                            {
+                                                phoneNumber && (
+                                                    <CardDescription>
+                                                        {phoneNumber}
+                                                    </CardDescription>
+                                                )
+                                            }
+                                            <CardAction>
+                                                <Button variant={"ghost"}>
+                                                    <Ellipsis />
+                                                </Button>
+                                            </CardAction>
+                                        </CardHeader>
+                                        {
+                                            lastMessageDate && (
+                                                <CardFooter>
+                                                    <CardDescription className="font-extralight">
+                                                        {lastMessageDate}
+                                                    </CardDescription>
+                                                </CardFooter>
+                                            )
+                                        }
+                                    </Card>
+                                )
+                            }
 
                             return (
                                 <Link
