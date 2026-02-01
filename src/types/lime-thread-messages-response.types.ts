@@ -35,7 +35,60 @@ export type LimeThreadMessage = {
     date: string // ISO string
     status: "consumed" | "dispatched"
     content: LimeMessageContent
+    metadata?: LimeMetadata
 }
+
+export type LimeMetadata = {
+    // Campos comuns (quando existirem)
+    $elapsedTimeToStorage?: string
+    $originator?: string
+    $internalId?: string
+    $claims?: string
+    $originatorSessionRemoteNode?: string
+
+    // Datas (geralmente como string numérica)
+    date_created?: string
+    "#date_processed"?: string
+
+    // Mensagem / estado
+    "#message.agentIdentity": string,
+    "#message.ticketId": string,
+    "#messageId"?: string
+    "#messageKind"?: "Response" | "Notification" | string
+    "#previousStateId"?: string
+    "#previousStateName"?: string
+    "#stateId"?: string
+    "#stateName"?: string
+
+    // Identificadores
+    "#uniqueId"?: string
+    "#inReplyToId"?: string
+    "#messageReferenceInternalID"?: string
+
+    // WhatsApp (quando canal = WA)
+    "#wa.timestamp"?: string
+    "#wa.context.from"?: string
+    "#wa.context.id"?: string
+    "#wa.message.id"?: string
+    "#wa.interactive.list.id"?: string
+    "#wa.interactive.button.id"?: string
+    "#wa.forwarded"?: boolean | null
+    "#wa.frequently_forwarded"?: boolean | null
+    "#wa.context.group_id"?: string | null
+
+    // Tunnel / roteamento
+    "#tunnel.owner"?: string
+    "#tunnel.originator"?: string
+    "#tunnel.originalFrom"?: string
+    "#tunnel.originalTo"?: string
+
+    // Tracing
+    traceparent?: string
+
+    // Permite QUALQUER outro metadata que o BLiP mandar
+    [key: string]: unknown
+}
+
 
 /* ======================================================
  * Content Union
@@ -49,6 +102,7 @@ export type LimeMessageContent =
     | LimeTemplateContent
     | LimeTicketContent
     | LimeInteractiveMessage
+    | LimeEmojiReaction
 
 /* ======================================================
  * Text
@@ -93,6 +147,19 @@ export type LimeReplyContent = {
         value: LimeInteractiveMessage
     }
 }
+
+export type LimeEmojiReaction = {
+    emoji: {
+        values: number[]
+    }
+    inReactionTo: {
+        id: string
+        type: string
+        value: string
+        direction: "sent" | "received"
+    }
+}
+
 
 export type LimeReceivedInteractiveObject = {
     direction: "received" | "sent"

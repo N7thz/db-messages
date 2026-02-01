@@ -17,6 +17,4 @@ if (!data) {
 
 const { SUPABASE_URL: url, SUPABASE_KEY: key } = data
 
-console.log({ url, key })
-
 export const supabase = createClient(url, key)

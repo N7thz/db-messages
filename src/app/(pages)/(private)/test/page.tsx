@@ -79,8 +79,6 @@ export default function Home() {
         resolver: zodResolver(Schema)
     })
 
-    if (errors) console.log(errors)
-
     async function onSubmit({ numberPhone }: FormData) {
 
         const result = await findContactIdByNumberPhone(numberPhone)

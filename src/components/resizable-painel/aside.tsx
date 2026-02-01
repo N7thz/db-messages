@@ -15,6 +15,7 @@ import {
 } from "@/components/ui/card"
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area"
 import { Separator } from "@/components/ui/separator"
+import { normalizeWhatsAppIdentify } from "@/functions/validate-identify"
 import { cn } from "@/lib/utils"
 import { useQuery } from "@tanstack/react-query"
 import { formatDate } from "date-fns"
@@ -59,8 +60,6 @@ export const Aside = () => {
 
     const { resource } = data
 
-    console.log(resource)
-
     return (
         <Card className="size-full rounded-none">
             <CardHeader>
@@ -83,9 +82,12 @@ export const Aside = () => {
                         resource.items.map(({
                             identity,
                             name,
-                            extras,
                             ...rest
                         }) => {
+                        
+                            console.log(name)
+
+                            const contact = normalizeWhatsAppIdentify(identity)
 
                             const contactIsValid = identity.includes("@wa.gw.msging.net")
 
@@ -149,7 +151,7 @@ export const Aside = () => {
                             return (
                                 <Link
                                     key={identity}
-                                    href={`/${identity}`}
+                                    href={`/${contact}`}
                                     className="group"
                                 >
                                     <Card className={cn(
