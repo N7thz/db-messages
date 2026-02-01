@@ -3,6 +3,7 @@
 import { findManyContacts } from "@/actions/blip/find-many-contacts"
 import { SearchInput } from "@/components/seach-input"
 import { toast } from "@/components/toast"
+import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import {
     Card,
@@ -22,8 +23,14 @@ import { formatDate } from "date-fns"
 import { ptBR } from "date-fns/locale"
 import { Contact, Ellipsis } from "lucide-react"
 import Link from "next/link"
+import { AsideLoading } from "./aside-loading"
+import { usePathname } from "next/navigation"
 
 export const Aside = () => {
+
+    const pathname = usePathname().slice(1)
+
+    console.log(pathname)
 
     const {
         data,
@@ -37,9 +44,7 @@ export const Aside = () => {
 
     if (isLoading || !data) {
         return (
-            <p>
-                Carregando...
-            </p>
+            <AsideLoading />
         )
     }
 
@@ -71,9 +76,9 @@ export const Aside = () => {
                     <CardTitle className="text-2xl flex items-center gap-2">
                         <Contact className="size-6" />
                         Contatos
-                        <span>
-                            ({resource.total})
-                        </span>
+                        <Badge className="h-full">
+                            {resource.total}
+                        </Badge>
                     </CardTitle>
                 </CardHeader>
                 <Separator />
@@ -84,12 +89,8 @@ export const Aside = () => {
                             name,
                             ...rest
                         }) => {
-                        
-                            console.log(name)
 
                             const contact = normalizeWhatsAppIdentify(identity)
-
-                            const contactIsValid = identity.includes("@wa.gw.msging.net")
 
                             const lastMessageDate = (
                                 rest.lastMessageDate
@@ -109,45 +110,6 @@ export const Aside = () => {
                                     : null
                             )
 
-                            if (!contactIsValid) {
-                                return (
-                                    <Card
-                                        key={identity}
-                                        className={cn(
-                                            "size-full my-2 opacity-60 cursor-not-allowed"
-                                        )}
-                                        title="Não é possivel acessar esse contato"
-                                    >
-                                        <CardHeader>
-                                            <CardTitle className="truncate">
-                                                {name}
-                                            </CardTitle>
-                                            {
-                                                phoneNumber && (
-                                                    <CardDescription>
-                                                        {phoneNumber}
-                                                    </CardDescription>
-                                                )
-                                            }
-                                            <CardAction>
-                                                <Button variant={"ghost"}>
-                                                    <Ellipsis />
-                                                </Button>
-                                            </CardAction>
-                                        </CardHeader>
-                                        {
-                                            lastMessageDate && (
-                                                <CardFooter>
-                                                    <CardDescription className="font-extralight">
-                                                        {lastMessageDate}
-                                                    </CardDescription>
-                                                </CardFooter>
-                                            )
-                                        }
-                                    </Card>
-                                )
-                            }
-
                             return (
                                 <Link
                                     key={identity}
@@ -156,10 +118,11 @@ export const Aside = () => {
                                 >
                                     <Card className={cn(
                                         "size-full transition-all",
-                                        "group-hoverbg-card/60 group-hoverborder-2 group-hover:scale-95 my-2"
+                                        "group-hoverbg-card/60 group-hoverborder-2 group-hover:scale-95 my-2",
+                                        pathname === identity && "bg-secondary border-none"
                                     )}>
                                         <CardHeader>
-                                            <CardTitle className="truncate">
+                                            <CardTitle className="truncate font-semibold capitalize">
                                                 {name}
                                             </CardTitle>
                                             {

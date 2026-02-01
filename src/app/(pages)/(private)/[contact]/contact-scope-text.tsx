@@ -2,10 +2,12 @@ import { Button } from "@/components/ui/button"
 import {
     Card,
     CardContent,
+    CardDescription,
     CardFooter,
     CardHeader,
     CardTitle
 } from "@/components/ui/card"
+import { stringToHTML } from "@/functions/string-to-HTML"
 import { cn } from "@/lib/utils"
 import { LimeSelectContent } from "@/types/lime-thread-messages-response.types"
 import { formatDate } from "date-fns"
@@ -19,16 +21,18 @@ export const ContactScopeText = ({
     content: LimeSelectContent
     date: string
 }) => {
+
     return (
         <Card className={cn(
             "w-1/2 text-sm",
+            "@max-5xl/chat:w-9/10",
             direction === "sent"
                 ? "dark:bg-[#144d37] bg-[#d9fdd3] rounded-tr-none"
                 : "dark:bg-muted bg-zinc-100 rounded-tl-none"
         )}>
             <CardHeader>
                 <CardTitle>
-                    {text}
+                    {stringToHTML(text)}
                 </CardTitle>
             </CardHeader>
             <CardContent className="flex flex-col gap-2">
@@ -46,7 +50,9 @@ export const ContactScopeText = ({
                 }
             </CardContent>
             <CardFooter className="ml-auto">
-                {formatDate(date, "HH:mm")}
+                <CardDescription>
+                    {formatDate(date, "HH:mm")}
+                </CardDescription>
             </CardFooter>
         </Card>
     )

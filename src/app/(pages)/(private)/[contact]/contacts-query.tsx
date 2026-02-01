@@ -26,6 +26,10 @@ import { ContactScopeText } from "./contact-scope-text"
 import { ContactScopeTextResponse } from "./contact-scope-text-response"
 import { ContactsQueryLoading } from "./contacts-query-loading"
 import { renderEmoji } from "@/functions/render-emoji"
+import { isSameDay } from "date-fns"
+import { formatChatDate } from "@/functions/format-chat-date"
+import { Badge } from "@/components/ui/badge"
+import { AudioPlayer } from "@/components/audio-player"
 
 export const ContactsQuery = ({ identity }: { identity: string }) => {
 
@@ -94,9 +98,11 @@ export const ContactsQuery = ({ identity }: { identity: string }) => {
                     </CardHeader>
                 )
             }
-            <ScrollArea className="flex-1 min-h-200">
+            <ScrollArea className="flex-1 min-h-200 @container/chat">
                 <ScrollBar />
-                <CardContent className="space-y-2 px-2">
+                <CardContent className={cn(
+                    "space-y-2 px-2"
+                )}>
                     {
                         resource.items.length === 0
                             ? (
@@ -108,13 +114,27 @@ export const ContactsQuery = ({ identity }: { identity: string }) => {
                                     </CardContent>
                                 </Card>
                             )
-                            : [...resource.items].reverse().map(({
-                                id, direction, content, date, metadata, ...rest
-                            }) => {
+                            : [...resource.items].reverse().map((
+                                {
+                                    id, direction, content, date, metadata
+                                },
+                                index,
+                                array
+                            ) => {
+
+                                const currentDate = new Date(date)
+
+                                const previousDate =
+                                    index > 0 ? new Date(array[index - 1].date) : null
+
+                                const showDateDivider =
+                                    !previousDate || !isSameDay(currentDate, previousDate)
 
                                 if (
                                     typeof content === "object" &&
-                                    "emoji" in content
+                                    "type" in content &&
+                                    typeof content.type === "string" &&
+                                    content.type === "audio/ogg"
                                 ) {
                                     console.log(content)
                                 }
@@ -123,12 +143,36 @@ export const ContactsQuery = ({ identity }: { identity: string }) => {
                                     <div
                                         key={id}
                                         className={cn(
-                                            "w-full flex",
+                                            "w-full flex flex-col",
                                             direction === "sent"
-                                                ? "justify-end"
-                                                : "justify-start"
+                                                ? "items-end"
+                                                : "items-start"
                                         )}
                                     >
+                                        {
+                                            showDateDivider && (
+                                                <Badge
+                                                    variant="secondary"
+                                                    className="text-xs  mx-auto py-2 px-4 dark:bg-muted bg-zinc-100 border border-border mb-3 not-first:mt-2.5"
+                                                >
+                                                    {formatChatDate(currentDate)}
+                                                </Badge>
+                                            )
+                                        }
+                                        {
+                                            (
+                                                typeof content === "object" &&
+                                                "type" in content &&
+                                                typeof content.type === "string" &&
+                                                content.type === "audio/ogg"
+                                            ) && (
+                                                <AudioPlayer
+                                                    url={content.uri}
+                                                    date={date}
+                                                    direction={direction}
+                                                />
+                                            )
+                                        }
                                         {
                                             (
                                                 typeof content === "object" &&
@@ -181,7 +225,7 @@ export const ContactsQuery = ({ identity }: { identity: string }) => {
                                                 <ContactScopeTextResponse
                                                     date={date}
                                                     direction={direction}
-                                                    value={content.replied.value}
+                                                    title={content.replied.value}
                                                 />
                                             )
                                         }

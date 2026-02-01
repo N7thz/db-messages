@@ -6,6 +6,7 @@ import {
     CardHeader,
     CardTitle
 } from "@/components/ui/card"
+import { stringToHTML } from "@/functions/string-to-HTML";
 
 export const ContactInterativeListRow = ({
     row: {
@@ -25,7 +26,7 @@ export const ContactInterativeListRow = ({
                 variant="outline"
                 className="flex flex-col size-full whitespace-normal"
             >
-                {title}
+                {stringToHTML(title)}
                 {
                     description && (
                         <CardDescription>
