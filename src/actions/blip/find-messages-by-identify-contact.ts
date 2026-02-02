@@ -1,5 +1,6 @@
 "use server"
 
+import { env } from "@/env"
 import { api } from "@/lib/axios"
 import {
     LimeThreadMessagesResponse
@@ -16,7 +17,7 @@ export async function findMessagesByIdentifyContact(identify: string) {
     const url = "https://chabra.http.msging.net/commands"
 
     const result = findManyContactsSchema.safeParse({
-        ROUTER_API_KEY: process.env.ROUTER_API_KEY,
+        ROUTER_API_KEY: env.ROUTER_API_KEY,
     })
 
     if (!result.success) {

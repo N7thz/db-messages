@@ -1,3 +1,4 @@
+import { env } from '@/env'
 import { createClient } from '@supabase/supabase-js'
 import z from 'zod'
 
@@ -6,8 +7,8 @@ const envSchema = z.object({
     SUPABASE_KEY: z.string().min(1),
 })
 
-const SUPABASE_URL = process.env.SUPABASE_URL
-const SUPABASE_KEY = process.env.SUPABASE_KEY
+const SUPABASE_URL = env.SUPABASE_URL
+const SUPABASE_KEY = env.SUPABASE_KEY
 
 const { data } = envSchema.safeParse({ SUPABASE_KEY, SUPABASE_URL })
 

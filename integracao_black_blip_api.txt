@@ -1,12 +1,3 @@
-Chave Roteador
-Key cm91dGVyZGV2ODc6c09GVUxLSWtnSFFUWnFkbElpR2c =
-
-
-Chave Blip Desk
-Key ZGV2YXRoOTpkOGsxT0E5OG9UOW9uM3htck5JbQ ==
-
-
-
     Obter Identity do Contato:
         curl--location 'https://chabra.http.msging.net/commands' \
 --header 'Authorization: Key cm91dGVyZGV2ODc6c09GVUxLSWtnSFFUWnFkbElpR2c=' \
@@ -51,9 +42,6 @@ curl--location 'https://chabra.http.msging.net/messages' \
     }
 }
 }'
-
-
-
 
 //obter lista de tikets:
 curl--location 'https://chabra.http.msging.net/commands' \

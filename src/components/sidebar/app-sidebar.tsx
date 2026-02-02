@@ -22,6 +22,7 @@ import {
 	Cog,
 	Home,
 	Settings,
+	Tag,
 	UserCircle2
 } from "lucide-react"
 import { headers } from "next/headers"
@@ -62,9 +63,9 @@ export const AppSidebar = async () => {
 							</SidebarMenuItem>
 							<SidebarMenuItem>
 								<SidebarMenuButton asChild>
-									<Link href={"#"}>
-										<Calendar />
-										<span>Agenda</span>
+									<Link href={"/tickets"}>
+										<Tag />
+										<span>Tickets</span>
 									</Link>
 								</SidebarMenuButton>
 							</SidebarMenuItem>

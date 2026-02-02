@@ -5,6 +5,7 @@ import { BodyBlib } from "@/types/index.types"
 import type { BlipAccountResponse } from "@/types/blip-account-response.types"
 import { randomUUID } from "node:crypto"
 import { z } from "zod"
+import { env } from "@/env"
 
 const findContactIdByNumberPhoneSchema = z.object({
     ROUTER_API_KEY: z.string().min(1, "A chave do roteador é obrigatória."),
@@ -56,7 +57,7 @@ export async function findContactIdByNumberPhone(numberPhone: string) {
     const url = "https://chabra.http.msging.net/commands"
 
     const result = findContactIdByNumberPhoneSchema.safeParse({
-        ROUTER_API_KEY: process.env.ROUTER_API_KEY,
+        ROUTER_API_KEY: env.ROUTER_API_KEY,
         numberPhone,
     })
 

@@ -4,6 +4,7 @@ import { api } from "@/lib/axios"
 import { randomUUID } from "node:crypto"
 import { LimeCollectionResponse } from "@/types/lime-collection-response.types"
 import z from "zod"
+import { env } from "@/env"
 
 const findManyContactsSchema = z.object({
     ROUTER_API_KEY: z.string().min(1, "A chave do roteador é obrigatória."),
@@ -14,7 +15,7 @@ export async function findManyContacts() {
     const url = "https://chabra.http.msging.net/commands"
 
     const result = findManyContactsSchema.safeParse({
-        ROUTER_API_KEY: process.env.ROUTER_API_KEY,
+        ROUTER_API_KEY: env.ROUTER_API_KEY,
     })
 
     if (!result.success) {
