@@ -9,12 +9,7 @@ const envSchema = z.object({
   BETTER_AUTH_SECRET: z
     .string()
     .min(32, "BETTER_AUTH_SECRET deve ter no mínimo 32 caracteres"),
-  BETTER_AUTH_URL: z.url("BETTER_AUTH_URL deve ser uma URL válida"),
-
-  // Next.js Public
-  NEXT_PUBLIC_URL: z
-    .url("NEXT_PUBLIC_URL deve ser uma URL válida"),
-
+    
   // Supabase
   SUPABASE_URL: z.string().url("SUPABASE_URL deve ser uma URL válida"),
   SUPABASE_KEY: z
