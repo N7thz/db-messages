@@ -9,9 +9,10 @@ const envSchema = z.object({
   BETTER_AUTH_SECRET: z
     .string()
     .min(32, "BETTER_AUTH_SECRET deve ter no mínimo 32 caracteres"),
-    
+
   // Supabase
-  SUPABASE_URL: z.string().url("SUPABASE_URL deve ser uma URL válida"),
+  SUPABASE_URL: z
+    .url("SUPABASE_URL deve ser uma URL válida"),
   SUPABASE_KEY: z
     .string()
     .min(1, "SUPABASE_KEY é obrigatória")

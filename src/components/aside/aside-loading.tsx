@@ -29,7 +29,7 @@ export const AsideLoading = () => {
                     <CardTitle className="text-2xl flex items-center gap-2">
                         <Contact className="size-6" />
                         Contatos
-                        <Badge className="h-full scale-150">
+                        <Badge className="h-full">
                             99
                         </Badge>
                     </CardTitle>

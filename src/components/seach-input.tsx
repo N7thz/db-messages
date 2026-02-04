@@ -1,19 +1,25 @@
-import { ArrowRightIcon, SearchIcon } from "lucide-react";
-import { useId } from "react";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input"
+import { cn } from "@/lib/utils"
+import { SearchIcon } from "lucide-react"
+import { ComponentProps } from "react"
 
-export const SearchInput = () => {
+type SearchInputProps = ComponentProps<typeof Input> & {
+  classNameDiv?: string | undefined
+}
 
-  const id = useId();
-
+export const SearchInput = ({
+  classNameDiv,
+  className,
+  placeholder,
+  ...props
+}: SearchInputProps) => {
   return (
-    <div className="relative">
+    <div className={cn("relative", classNameDiv)}>
       <Input
-        className="peer ps-9 pe-9 rounded-full"
-        id={id}
-        placeholder="Pesquisar mensagens..."
         type="search"
+        className={cn("peer ps-9 pe-9 rounded-full", className)}
+        placeholder={placeholder ?? "Pesquisar mensagens..."}
+        {...props}
       />
       <div className="pointer-events-none absolute inset-y-0 start-0 flex items-center justify-center ps-3 text-muted-foreground/80 peer-disabled:opacity-50">
         <SearchIcon size={16} />

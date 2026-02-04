@@ -11,6 +11,7 @@ import { Spinner } from "@/components/ui/spinner"
 import {
     extractNameFromBlipIdentity
 } from "@/functions/extract-name-from-blip-identity"
+import { cn } from "@/lib/utils"
 import { useQuery } from "@tanstack/react-query"
 import { formatDate } from "date-fns"
 import { ptBR } from "date-fns/locale"
@@ -71,7 +72,7 @@ export const TicketsQuery = () => {
         <Card className="flex-1 border-none rounded-none">
             <ScrollArea className="flex-1 min-h-200">
                 <ScrollBar />
-                <CardContent className="flex flex-col gap-2 space-y-2 px-2">
+                <CardContent className="grid grid-cols-2 gap-2 space-y-2 px-2">
                     {
                         items.map(({
                             id, status, team, closedBy, closeDate
@@ -85,7 +86,14 @@ export const TicketsQuery = () => {
                                         {id}
                                     </CardTitle>
                                     <CardAction>
-                                        <Badge className="text-sm">
+                                        <Badge className={cn(
+                                            "text-sm text-primary",
+                                            translateStatus(status) === "aberto"
+                                                ? "bg-red-500"
+                                                : translateStatus(status) === "transferido"
+                                                    ? "bg-orange-400"
+                                                    : "bg-green-500"
+                                        )}>
                                             {translateStatus(status)}
                                         </Badge>
                                     </CardAction>
@@ -113,12 +121,11 @@ export const TicketsQuery = () => {
 
                                         )
                                     }
-                                    <Separator orientation="vertical" />
                                     {
                                         closedBy && (
                                             <div className="flex">
                                                 fechado por:
-                                                <Badge className="text-sm mx-2">
+                                                <Badge className="text-sm mx-2 capitalize">
                                                     {extractNameFromBlipIdentity(closedBy)}
                                                 </Badge>
                                             </div>

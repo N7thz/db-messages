@@ -1,4 +1,5 @@
 export function normalizeWhatsAppIdentify(identify: string): string {
+    
     const [rawNumber, domain] = identify.split("@")
 
     if (!rawNumber || !domain) {
@@ -12,6 +13,7 @@ export function normalizeWhatsAppIdentify(identify: string): string {
 
     // caso inválido E comece com 5555 → remove um 55
     if (!isValidLength && digits.startsWith("5555")) {
+        
         const normalized = digits.slice(2)
 
         if (normalized.length === 12 || normalized.length === 13) {

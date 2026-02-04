@@ -16,19 +16,15 @@ export interface LimeCollectionResource {
 }
 
 export interface LimeContact {
-    name: string
     identity: string
+    name: string
     source: string
-
     lastMessageDate?: string
     lastUpdateDate?: string
-
     phoneNumber?: string
     email?: string
     taxDocument?: string
-
     group?: string
-
     extras?: LimeContactExtras
 }
 
