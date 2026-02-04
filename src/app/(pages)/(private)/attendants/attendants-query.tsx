@@ -32,33 +32,30 @@ export const AttendantsQuery = () => {
     if (isLoading || !attendants) {
         return (
             <Card className="flex-1 border-none rounded-none">
-                <ScrollArea className="flex-1 min-h-200">
-                    <ScrollBar />
-                    <CardContent className="grid grid-cols-2 gap-2 space-y-2 px-2">
-                        {
-                            Array.from({ length: 7 }).map((_, index) => (
-                                <Card
-                                    key={index}
-                                    className="justify-between h-40"
-                                >
-                                    <CardHeader>
-                                        <CardTitle>
-                                            <Skeleton className="h-6 rounded-full" />
-                                        </CardTitle>
-                                        <CardDescription>
-                                            <Skeleton className="w-1/2 h-4 rounded-full" />
-                                        </CardDescription>
-                                    </CardHeader>
-                                </Card>
-                            ))
-                        }
-                    </CardContent>
-                </ScrollArea>
+                <CardContent className="grid grid-cols-2 gap-2 space-y-2 px-2">
+                    {
+                        Array.from({ length: 7 }).map((_, index) => (
+                            <Card
+                                key={index}
+                                className="h-42 bg-background"
+                            >
+                                <CardHeader>
+                                    <CardTitle>
+                                        <Skeleton className="h-6 rounded-full" />
+                                    </CardTitle>
+                                    <CardDescription>
+                                        <Skeleton className="w-1/2 h-4 rounded-full" />
+                                    </CardDescription>
+                                </CardHeader>
+                            </Card>
+                        ))
+                    }
+                </CardContent>
             </Card>
         )
     }
 
-    const { resource: { items } } = attendants
+    const { resource: { items = [] } } = attendants
 
     return (
         <Card className="flex-1 border-none rounded-none">
@@ -73,7 +70,7 @@ export const AttendantsQuery = () => {
                 <CardContent className="grid grid-cols-2 gap-2 space-y-2 px-2">
                     {
                         items.map(({
-                            email, identity, status, teams
+                            identity, email, status, teams = []
                         }) => (
                             <Card
                                 key={identity}
@@ -107,9 +104,9 @@ export const AttendantsQuery = () => {
                                                 Sem listas adicionadas
                                             </Badge>
                                         ) : (
-                                            teams.map(team => (
+                                            teams.map((team, index) => (
                                                 <Badge
-                                                    key={team}
+                                                    key={`${identity}-${team}-${index}`}
                                                     className="w-fit px-3 py-2 rounded-md text-center whitespace-normal"
                                                 >
                                                     {team}
