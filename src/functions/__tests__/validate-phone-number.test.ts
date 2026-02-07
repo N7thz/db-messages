@@ -1,4 +1,3 @@
-import { describe, it, expect } from 'vitest'
 import { phoneNumberBRSchema } from '../validate-phone-number'
 
 describe('phoneNumberBRSchema', () => {

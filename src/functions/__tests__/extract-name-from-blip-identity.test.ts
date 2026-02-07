@@ -1,4 +1,3 @@
-import { describe, it, expect } from 'vitest'
 import { extractNameFromBlipIdentity } from '../extract-name-from-blip-identity'
 
 describe('extractNameFromBlipIdentity', () => {
