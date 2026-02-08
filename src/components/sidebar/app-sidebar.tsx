@@ -17,6 +17,7 @@ import {
 } from "@/components/ui/sidebar"
 import { auth } from "@/lib/auth"
 import {
+	BookUser,
 	Calendar,
 	ChevronUp,
 	Cog,
@@ -59,6 +60,14 @@ export const AppSidebar = async () => {
 									<Link href={"/"}>
 										<Home />
 										<span>Home</span>
+									</Link>
+								</SidebarMenuButton>
+							</SidebarMenuItem>
+							<SidebarMenuItem>
+								<SidebarMenuButton asChild>
+									<Link href={"/contacts"}>
+										<BookUser />
+										<span>Tickets</span>
 									</Link>
 								</SidebarMenuButton>
 							</SidebarMenuItem>
