@@ -26,6 +26,11 @@ export const auth = betterAuth({
 			teams: {
 				type: "string[]",
 			},
+			role: {
+				type: "string",
+				enum: ["USER", "SUPERVISOR", "ADMIN"],
+				default: "USER",
+			},
 		}
 	},
 	emailAndPassword: {
