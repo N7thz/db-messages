@@ -1,4 +1,3 @@
-// src/actions/auth/sign-up-email.ts
 "use server"
 
 import { auth } from "@/lib/auth"

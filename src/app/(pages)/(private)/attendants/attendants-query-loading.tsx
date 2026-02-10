@@ -15,7 +15,7 @@ export const AttendantsQueryLoading = () => {
                     Array.from({ length: 7 }).map((_, index) => (
                         <Card
                             key={`${index}-${new Date()}`}
-                            className="h-42 bg-background"
+                            className="h-42 bg-card z-10"
                         >
                             <CardHeader>
                                 <CardTitle>

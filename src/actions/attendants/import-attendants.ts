@@ -16,10 +16,9 @@ export async function importAttendants({ attendents }: ImportAttendantsProps) {
         },
     })
 
-        // roda em background
         ; (async () => {
             try {
-                // marca como running
+
                 await prisma.importJob.update({
                     where: { id: job.id },
                     data: { status: "running" },
@@ -27,6 +26,7 @@ export async function importAttendants({ attendents }: ImportAttendantsProps) {
 
                 for (const { identity, email, teams } of attendents) {
                     try {
+                        
                         const exists = await prisma.user.findUnique({
                             where: { identity },
                         })
@@ -43,7 +43,7 @@ export async function importAttendants({ attendents }: ImportAttendantsProps) {
                             })
                         }
                     } catch (itemError) {
-                        // salva erro individual
+
                         await prisma.importJob.update({
                             where: { id: job.id },
                             data: {
@@ -56,7 +56,9 @@ export async function importAttendants({ attendents }: ImportAttendantsProps) {
                                 },
                             },
                         })
+                        
                     } finally {
+
                         await prisma.importJob.update({
                             where: { id: job.id },
                             data: {
@@ -72,20 +74,22 @@ export async function importAttendants({ attendents }: ImportAttendantsProps) {
                 })
 
             } catch {
+
                 await prisma.importJob.update({
                     where: { id: job.id },
                     data: { status: "error" },
                 })
+
             } finally {
-                // ⏳ apaga o job após 10 segundos
+
                 setTimeout(async () => {
                     try {
+
                         await prisma.importJob.delete({
                             where: { id: job.id },
                         })
-                    } catch {
-                        // evita crash se já tiver sido deletado
-                    }
+
+                    } catch {}
                 }, 10_000)
             }
         })()

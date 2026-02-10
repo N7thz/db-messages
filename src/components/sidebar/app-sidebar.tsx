@@ -89,7 +89,7 @@ export const AppSidebar = async () => {
 							</SidebarMenuItem>
 							<SidebarMenuItem>
 								<SidebarMenuButton asChild>
-									<Link href={"/"}>
+									<Link href={"/settings"}>
 										<Settings />
 										<span>Opções</span>
 									</Link>
@@ -112,7 +112,7 @@ export const AppSidebar = async () => {
 							</DropdownMenuTrigger>
 							<DropdownMenuContent side="top">
 								<DropdownMenuItem asChild>
-									<Link href={"/"}>
+									<Link href={"/settings"}>
 										<Cog />
 										<span>Opções</span>
 									</Link>

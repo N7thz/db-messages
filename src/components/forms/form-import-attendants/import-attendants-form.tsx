@@ -1,9 +1,5 @@
-import { importAttendants } from "@/actions/attendants/import-attendants"
-import { findManyAttendants } from "@/actions/blip/find-many-attendants"
-import { getImportJob } from "@/actions/jobs/get-import-progress"
 import { ImportProgressBar } from "@/components/import-progress-bar"
 import { SpanErrorMessage } from "@/components/span-error"
-import { toast } from "@/components/toast"
 import {
     AlertDialog,
     AlertDialogAction,
@@ -24,22 +20,14 @@ import {
     CardTitle
 } from "@/components/ui/card"
 import { Checkbox } from "@/components/ui/checkbox"
-import { Progress } from "@/components/ui/progress"
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area"
 import { Skeleton } from "@/components/ui/skeleton"
 import { Spinner } from "@/components/ui/spinner"
 import {
     extractNameFromBlipIdentity
 } from "@/functions/extract-name-from-blip-identity"
-import { queryClient } from "@/providers/theme-provider"
-import {
-    ImportAttendantsProps, importAttendantsSchema
-} from "@/schemas/import-attendants-schema"
-import { zodResolver } from "@hookform/resolvers/zod"
-import { useMutation, useQuery } from "@tanstack/react-query"
 import { Import, ListChecks, ListX, X } from "lucide-react"
-import { useEffect, useState } from "react"
-import { useFieldArray, useForm } from "react-hook-form"
+import { useFormImportAttendants } from "./use-form-import-attendants"
 
 export type ImportFailedItem = {
     identity: string
@@ -49,91 +37,26 @@ export type ImportFailedItem = {
 
 export const ImportAttendantsForm = () => {
 
-    const [open, setOpen] = useState(false)
-    const [jobId, setJobId] = useState<string | null>(null)
-
     const {
-        reset,
-        control,
-        handleSubmit,
-        formState: { errors }
-    } = useForm<ImportAttendantsProps>({
-        resolver: zodResolver(importAttendantsSchema),
-        defaultValues: {
-            attendents: []
-        },
-        mode: "onSubmit"
-    })
-
-    const {
-        fields,
-        append,
-        remove
-    } = useFieldArray({
-        control,
-        name: "attendents"
-    })
-
-    const { data: job } = useQuery({
-        queryKey: ["import-job", jobId],
-        queryFn: () => getImportJob(jobId!),
-        enabled: !!jobId,
-        refetchInterval: (query) =>
-            query.state.data?.status === "pending" ? 1000 : false,
-    })
-
-    useEffect(() => {
-
-        setTimeout(() => {
-            if (job?.status === undefined) {
-                toast({
-                    title: "Importação concluída",
-                    onAutoClose: () => {
-                        setOpen(false)
-                        reset()
-                    }
-                })
-            }
-        }, 3500)
-
-        if (job?.status === "error") {
-            toast({
-                title: "Importação interrompida",
-                variant: "destructive",
-            })
-        }
-    }, [job])
-
-    const {
-        mutate,
+        open,
+        setOpen,
+        selected,
+        total,
         isPending,
-    } = useMutation({
-        mutationKey: ["import-attendants"],
-        mutationFn: ({ attendents }: ImportAttendantsProps) => {
-            return importAttendants({ attendents })
-        },
-        onSuccess: ({ jobId }) => {
-
-            setJobId(jobId)
-
-            queryClient.invalidateQueries({
-                queryKey: ["find-many-attendants"]
-            })
-        },
-        onError: (error) => toast({
-            title: error.name,
-            description: error.message,
-            variant: "destructive"
-        })
-    })
-
-    const {
-        data: attendants,
+        allSelected,
+        toggleAllAttendants,
+        isChecked,
+        handleSubmit,
+        onSubmit,
+        indexByIdentity,
+        append,
+        remove,
+        errors,
+        job,
+        items,
+        attendants,
         isLoading
-    } = useQuery({
-        queryKey: ["find-many-attendants-blip"],
-        queryFn: () => findManyAttendants()
-    })
+    } = useFormImportAttendants()
 
     if (!attendants || isLoading) {
         return (
@@ -145,43 +68,6 @@ export const ImportAttendantsForm = () => {
                 }
             </div>
         )
-    }
-
-    const { resource: { items } } = attendants
-
-    const total = items.length
-    const selected = fields.length
-    const allSelected = total > 0 && selected === total
-
-    const isChecked = (identity: string) =>
-        fields.some(a => a.identity === identity)
-
-    const indexByIdentity = (identity: string) =>
-        fields.findIndex(a => a.identity === identity)
-
-    function toggleAllAttendants() {
-
-        if (!attendants) return
-
-        if (allSelected) {
-            remove()
-            return
-        }
-
-        const all = attendants.resource.items.map(
-            ({ identity, email, teams }) => ({
-                identity,
-                email,
-                teams
-            })
-        )
-
-        remove()
-        append(all)
-    }
-
-    function onSubmit(data: ImportAttendantsProps) {
-        mutate(data)
     }
 
     return (
